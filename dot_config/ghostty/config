@@ -1,1 +1,9 @@
 custom-shader = shaders/cursor_warp.glsl
+
+theme = Tomorrow Night Blue
+background-opacity = 0.9
+background-blur = true
+
+bell-features = system
+
+macos-option-as-alt = left
