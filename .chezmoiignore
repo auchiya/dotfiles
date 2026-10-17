@@ -1,0 +1,32 @@
+# Caches/OS junk
+**/.DS_Store
+.cache/
+.local/share/nvim/
+.local/state/
+
+# Secrets - never track
+.ssh/
+.gnupg/
+.aws/
+.config/gh/hosts.yml
+.config/github-copilot/
+.claude.json
+.copilot/
+.netrc
+*.key
+*.pem
+*credentials*
+*secret*
+
+# Tool-specific large/generated caches (optional)
+.config/nvim/lazy-lock.json
+.config/nvim/plugin/packer_compiled*
+.config/opencode/node_modules/
+.config/opencode/bun.lock
+.config/opencode/package-lock.json
+
+# Ghostty shaders vendored repo - don't track nested git
+.config/ghostty/shaders/.git/
+.config/ghostty/shaders/.git/**
+dot_config/ghostty/shaders/dot_git/
+dot_config/ghostty/shaders/dot_git/**
