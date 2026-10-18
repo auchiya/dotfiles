@@ -1,3 +1,6 @@
+# This repo's docs are not a dotfile
+README.md
+
 # Caches/OS junk
 **/.DS_Store
 .cache/
@@ -30,3 +33,34 @@
 .config/ghostty/shaders/.git/**
 dot_config/ghostty/shaders/dot_git/
 dot_config/ghostty/shaders/dot_git/**
+
+# Windows version (native Windows + WSL): nvim only for now.
+# Add entries here as other configs get ported to Windows.
+{{ if ne .chezmoi.os "darwin" }}
+.zshrc
+.zprofile
+.config/ghostty
+.config/ghostty/**
+.config/lazygit
+.config/lazygit/**
+{{ end }}
+
+# Per-OS nvim overrides: each file only materializes on its matching OS.
+# Drop a file in lua/config/platform/ (options) or lua/plugins/ (plugin specs)
+# named macos.lua / windows.lua / linux.lua / wsl.lua.
+{{ if ne .chezmoi.os "darwin" }}
+.config/nvim/lua/config/platform/macos.lua
+.config/nvim/lua/plugins/macos.lua
+{{ end }}
+{{ if ne .chezmoi.os "windows" }}
+.config/nvim/lua/config/platform/windows.lua
+.config/nvim/lua/plugins/windows.lua
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+.config/nvim/lua/config/platform/linux.lua
+.config/nvim/lua/plugins/linux.lua
+{{ end }}
+{{ if not (and (eq .chezmoi.os "linux") (contains (lower .chezmoi.kernel.osrelease) "microsoft")) }}
+.config/nvim/lua/config/platform/wsl.lua
+.config/nvim/lua/plugins/wsl.lua
+{{ end }}

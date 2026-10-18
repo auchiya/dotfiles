@@ -1,19 +1,21 @@
 # Dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). This repo contains configuration for tools I use daily on macOS and Windows.
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). This repo contains configuration for tools I use daily on macOS and Windows (native + WSL).
 
 ## What's included
 
-- [Neovim (LazyVim)](https://lazyvim.github.io/) — editor configuration (`~/.config/nvim/`)
-- [Lazygit](https://github.com/jesseduffield/lazygit) — git TUI (`~/.config/lazygit/config.yml`)
-- [Ghostty](https://ghostty.org/) — terminal emulator config + custom shaders (`~/.config/ghostty/`)
-- [Zsh](https://www.zsh.org/) — shell config (`~/.zshrc`, `~/.zprofile`)
+- [Neovim (LazyVim)](https://lazyvim.github.io/) — editor configuration (`~/.config/nvim/`) — **all platforms**
+- [Lazygit](https://github.com/jesseduffield/lazygit) — git TUI (`~/.config/lazygit/config.yml`) — macOS only for now
+- [Ghostty](https://ghostty.org/) — terminal emulator config + custom shaders (`~/.config/ghostty/`) — macOS only for now
+- [Zsh](https://www.zsh.org/) — shell config (`~/.zshrc`, `~/.zprofile`) — macOS only for now
+
+On Windows (native and WSL) only Neovim is applied; everything else is ignored via the OS-aware rules in `.chezmoiignore`. Other configs will be ported over time.
 
 ## Prerequisites
 
 - [chezmoi](https://www.chezmoi.io/install/) (v2.x)
 - [git](https://git-scm.com/)
-- macOS with [Homebrew](https://brew.sh/) or your package manager of choice
+- macOS with [Homebrew](https://brew.sh/) or your package manager of choice (on Windows: Scoop/Chocolatey/WSL)
 
 ## Quick start
 
@@ -36,9 +38,16 @@ scoop install chezmoi
 # Or using Chocolatey
 choco install chezmoi
 
-# Initialize and apply
+# Initialize and apply (Neovim config only for now)
 chezmoi init --apply https://github.com/auchiya/dotfiles.git
 ```
+
+Notes for Windows:
+
+- Only `~/.config/nvim/` is applied (zsh/ghostty/lazygit are ignored until ported).
+- On **native Windows**, Neovim's default config dir is `%LOCALAPPDATA%\nvim`. A `run_onchange` script creates a directory junction `%LOCALAPPDATA%\nvim` → `~\.config\nvim` so both point at the same chezmoi-managed files. No admin rights required. If `%LOCALAPPDATA%\nvim` already exists as a real directory, the script leaves it alone — merge or delete it and re-run `chezmoi apply`.
+- In **WSL**, `~/.config/nvim/` is used directly, as on macOS.
+- Sanity check after applying: `chezmoi managed` should list only `.config/nvim/**` entries.
 
 ## Usage
 
@@ -104,6 +113,18 @@ chezmoi stores files in its source directory (`~/.local/share/chezmoi/`) with `d
 
 - `dot_zshrc` → `~/.zshrc`
 - `dot_config/nvim/` → `~/.config/nvim/`
+- `.chezmoiscripts/` → scripts run by `chezmoi apply` (never written to `$HOME`)
+
+## Per-OS Neovim overrides
+
+The base nvim config is shared by every machine. When a setting or plugin should only apply on one OS, use an override file — `.chezmoiignore` ensures the file is only materialized on that OS:
+
+- Options: `lua/config/platform/macos.lua`, `windows.lua`, `linux.lua`, `wsl.lua`
+  (auto-required by `lua/config/platform.lua`, which is loaded from `lua/config/options.lua`; WSL files load after `linux.lua`)
+- Plugin specs: `lua/plugins/macos.lua`, `windows.lua`, `linux.lua`, `wsl.lua`
+  (auto-loaded by lazy.nvim like any other `lua/plugins/*.lua`)
+
+The `.chezmoiignore` rules already cover these filenames; just drop the file in and `chezmoi apply` on that OS.
 
 ## Manual setup (without chezmoi)
 
@@ -157,6 +178,12 @@ Paths differ by app. Common equivalents:
 - Ghostty: copy `dot_config/ghostty/` to Ghostty's config directory (see Ghostty docs)
 - Neovim: `%LOCALAPPDATA%\nvim\` or `%APPDATA%\nvim\` depending on setup (copy `dot_config/nvim/` contents accordingly)
 - Zsh/profile are Unix-specific — skip on native Windows shells or use WSL
+
+Tip: on native Windows you can point Neovim at a copy of this repo with a junction (no admin needed):
+
+```powershell
+New-Item -ItemType Junction -Path "$env:LOCALAPPDATA\nvim" -Target "$env:USERPROFILE\dotfiles\dot_config\nvim"
+```
 
 `.chezmoiignore` only affects chezmoi; manual setup means you decide what to copy/symlink.
 

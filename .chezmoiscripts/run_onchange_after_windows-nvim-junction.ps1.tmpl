@@ -1,0 +1,20 @@
+{{ if eq .chezmoi.os "windows" -}}
+# Point Neovim's default config dir (%LOCALAPPDATA%\nvim) at the chezmoi-managed
+# ~/.config/nvim so both locations are the same files. Junctions need no admin.
+$nvimConfig = Join-Path $env:USERPROFILE ".config\nvim"
+$localNvim = Join-Path $env:LOCALAPPDATA "nvim"
+
+if (Test-Path $localNvim) {
+  $item = Get-Item $localNvim -Force
+  $target = @($item.Target)
+  if ($item.LinkType -eq "Junction" -and $target -contains $nvimConfig) {
+    exit 0
+  }
+  Write-Host "Skipping junction: $localNvim already exists."
+  Write-Host "Merge it into $nvimConfig (or delete it) and re-run chezmoi apply."
+  exit 0
+}
+
+New-Item -ItemType Junction -Path $localNvim -Target $nvimConfig | Out-Null
+Write-Host "Created junction: $localNvim -> $nvimConfig"
+{{ end -}}

@@ -5,3 +5,5 @@
 vim.g.root_spec = { "cwd", "lsp", { ".git", "lua" } }
 
 vim.g.lazyvim_ts_lsp = "tsgo"
+
+require("config.platform")
