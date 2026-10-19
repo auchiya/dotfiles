@@ -1,6 +1,10 @@
 # This repo's docs are not a dotfile
 README.md
 
+# Manual setup scripts (not dotfiles)
+scripts
+scripts/**
+
 # Caches/OS junk
 **/.DS_Store
 .cache/

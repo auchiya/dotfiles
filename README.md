@@ -49,6 +49,24 @@ Notes for Windows:
 - In **WSL**, `~/.config/nvim/` is used directly, as on macOS.
 - Sanity check after applying: `chezmoi managed` should list only `.config/nvim/**` entries.
 
+## Install LazyVim dependencies
+
+The nvim config expects the system tools checked by `:checkhealth lazyvim`. Install them manually per machine — nothing under `scripts/` is ever run by `chezmoi apply`.
+
+macOS / Linux / WSL (Homebrew):
+
+```bash
+bash "$(chezmoi source-path)/scripts/install-lazyvim-deps.sh"
+```
+
+Windows (winget):
+
+```powershell
+& "$(chezmoi source-path)\scripts\install-lazyvim-deps.ps1"
+```
+
+The scripts install (or confirm) neovim, git, ripgrep, fd, fzf, lazygit, and the tree-sitter CLI. LSP servers, DAP adapters, and related tooling are installed by Mason automatically when nvim starts. A [Nerd Font](https://www.nerdfonts.com/) is required for icons — the scripts print per-OS instructions but fonts are installed manually.
+
 ## Usage
 
 ### Apply changes from repo to local machine
