@@ -12,5 +12,8 @@ return {
         },
       },
     },
+    image = {
+      enable = true,
+    },
   },
 }
